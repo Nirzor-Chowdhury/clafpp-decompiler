@@ -1,0 +1,3 @@
+D:\study meterial\C based Decompiler\C based D compiler 2\bin\windows\x64\gui\libcurl.dll
+D:\study meterial\C based Decompiler\C based D compiler 2\bin\windows\x64\gui\z.dll
+D:\study meterial\C based Decompiler\C based D compiler 2\tmp\x64\Release\jdc.vcxproj.CopyComplete

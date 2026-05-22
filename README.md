@@ -29,7 +29,8 @@ The graphical user interface is developed using wxWidgets and provides an intera
 
 # Screenshot
 
-*Add screenshots of the GUI, disassembly view, CFG visualization, or generated pseudo code here.*
+![GUI](screenshots/main_gui.png)
+
 
 ---
 
@@ -187,6 +188,8 @@ The AI enhancement layer provides:
 * Reverse engineering assistance
 * Malware behavior summarization
 * Decompiled code annotation
+
+![GUI](screenshots/LLM_Setting.png)
 
 The system works completely offline without requiring external APIs.
 
