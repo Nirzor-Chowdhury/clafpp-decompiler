@@ -74,3 +74,119 @@ CLAF++ (C-Like Analysis Framework++) is a research-oriented binary decompilation
 
 ### AI-Enhanced Output
 ![Enhanced Code](screenshots/enhanced_output.png)
+
+</div>
+
+---
+
+## Installation
+
+### Prerequisites
+
+**Windows:**
+- Visual Studio 2022 or newer
+- wxWidgets 3.2+
+- vcpkg (for dependency management)
+- Optional: Ollama (for AI features)
+
+**Linux:**
+- GCC/G++ compiler
+- wxWidgets 3.2+ with GTK bindings
+- Make
+- Optional: Ollama (for AI features)
+
+### Quick Start
+
+#### Windows
+
+```batch
+# Clone the repository
+git clone https://github.com/Nirzor-Chowdhury/clafpp-decompiler.git
+cd clafpp-decompiler
+
+# Install dependencies via vcpkg
+vcpkg install curl[ssl]:x64-windows nlohmann-json:x64-windows wxwidgets:x64-windows
+vcpkg integrate install
+
+# Open and build the solution
+start jdc.sln
+```
+
+Build using Visual Studio (Ctrl+Shift+B) with **Release|x64** configuration.
+
+#### Linux
+
+```bash
+# Install system dependencies
+sudo apt update
+sudo apt install build-essential libwxgtk3.2-dev libcurl4-openssl-dev
+
+# Clone the repository
+git clone https://github.com/Nirzor-Chowdhury/clafpp-decompiler.git
+cd clafpp-decompiler
+
+# Build the GUI version
+make jdc-gui
+
+# Run the application
+./bin/linux/x64/gui/jdc
+```
+
+### AI Enhancement Setup (Optional)
+
+For AI-powered features, install Ollama:
+
+**Windows/Linux:**
+```bash
+# Install Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Download a code-specialized model
+ollama pull deepseek-coder:6.7b
+
+# Start the service (required for AI features)
+ollama serve
+```
+
+**Recommended Models:**
+- `deepseek-coder:6.7b` - Best for code analysis (recommended)
+- `mistral:latest` - General purpose alternative
+- `llama3.2:1b` - Fastest for testing
+
+---
+
+## Usage
+
+### Basic Workflow
+
+1. **Launch CLAF++** and select a binary executable (File → Open)
+2. **View Disassembly** in the left panel showing raw assembly instructions
+3. **Select a Function** from the function list to analyze
+4. **Review Decompiled Code** in the right panel showing pseudo-C output
+
+### AI-Enhanced Workflow
+
+1. Open an analyzed binary with decompiled functions visible
+2. Select a function to enhance
+3. Choose enhancement type from **LLM** menu:
+   - **Generate Function Comment**: Creates comprehensive documentation
+   - **Suggest Variable Names**: Proposes semantic identifiers
+   - **Analyze Complexity**: Calculates cyclomatic complexity
+   - **Generate Line Comments**: Adds inline explanations
+
+4. Review AI-generated suggestions and apply as needed
+
+### Configuration
+
+Access **LLM → Settings** to configure:
+- **Endpoint**: Ollama service URL (default: `http://localhost:11434`)
+- **Model**: Select from available local models
+- **Temperature**: Control randomness (0.7 recommended for code)
+- **Max Tokens**: Response length limit (800-1000 for detailed output)
+- **Timeout**: Maximum wait time (300-400s for complex functions)
+
+---
+
+## Architecture
+
+### Project Structure
