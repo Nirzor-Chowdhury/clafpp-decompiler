@@ -471,7 +471,7 @@ This project builds upon extensive prior work in reverse engineering, compiler t
 - Email: nirzor.chy10@gmail.com
 
 **Abhijeet**
-- GitHub: [[@A013](https://github.com/A3013)]
+- GitHub: [@A013](https://github.com/A3013)
 - Email: abhijeet301303@gmail.com
 
 ### Project Resources
