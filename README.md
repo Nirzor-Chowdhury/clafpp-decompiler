@@ -265,15 +265,8 @@ Planned enhancements include:
 
 # License
 
-Specify your project license here.
-
-Example:
-
-```text
 MIT License
-```
 
----
 
 # Acknowledgements
 
