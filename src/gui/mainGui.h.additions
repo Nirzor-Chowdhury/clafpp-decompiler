@@ -1,0 +1,79 @@
+// mainGui.h.additions
+// ============================================================================
+// Apply these changes to src/gui/mainGui.h. Lines marked with [+] are new;
+// the surrounding lines are shown for context (do not duplicate them).
+// ============================================================================
+
+// ---- AT THE TOP, AFTER THE EXISTING #include LINES (around line 11) --------
+
+#include "../decompiler/decompiler.h"
+// [+] LLM integration
+// [+] We forward-declare instead of including to keep the header light. The
+// [+] .cpp file pulls in the full definitions. This avoids dragging libcurl
+// [+] and nlohmann/json into every translation unit that includes mainGui.h.
+// [+] #include <memory> is needed for std::unique_ptr.
+// [+] #include <thread> is needed for the worker thread member.
+// [+] #include <atomic> is needed for the run-state flag.
+#include <memory>
+#include <thread>
+#include <atomic>
+
+namespace jdc { namespace llm {
+    class LLMCommentGenerator;
+    class LLMSettingsDialog;
+    struct Settings;
+}}
+
+
+// ---- INSIDE class MainGui, IN THE PUBLIC MEMBER SECTION --------------------
+// (Add right after the existing menu pointer members, e.g. after
+// `FunctionInfoMenu* functionInfoMenu = nullptr;` around line 26.)
+
+    // ------------------------------------------------------------------ LLM
+    std::unique_ptr<jdc::llm::LLMCommentGenerator> llmGenerator;
+    jdc::llm::LLMSettingsDialog* llmSettingsDialog = nullptr; // owned by wx
+
+    // Single worker for LLM calls. We allow only one in-flight LLM op at a
+    // time; the menu items are disabled while busy.
+    std::thread       llmWorkerThread;
+    std::atomic<bool> llmBusy{false};
+
+
+// ---- EXTEND THE `enum ids { ... }` BLOCK -----------------------------------
+// Add these IDs alongside the existing ones (before the closing brace).
+
+        // LLM menu IDs
+        LLMGenerateFunctionCommentID,
+        LLMGenerateLineCommentsID,
+        LLMSuggestVariableNamesID,
+        LLMAnalyzeComplexityID,
+        LLMOpenSettingsID
+
+
+// ---- ADD THESE METHOD DECLARATIONS in MainGui --------------------------
+// (Place near the other void-returning method declarations, e.g. after
+// `void ApplyAsmHighlighting();`.)
+
+    void InitLLM();
+    void ShutdownLLM();
+
+    void LLMGenerateFunctionComment();
+    void LLMGenerateLineComments();
+    void LLMSuggestVariableNames();
+    void LLMAnalyzeComplexity();
+    void LLMOpenSettings();
+
+    // Runs `task` on the worker thread; on completion, runs `onDone(result, error)`
+    // on the GUI thread. Disables LLM menu items while busy. Returns false if
+    // another LLM operation is already in progress.
+    bool RunLLMAsync(std::function<std::string(std::string&)> task,
+                     std::function<void(const std::string&, const std::string&)> onDone,
+                     const wxString& busyMessage);
+
+    // Helper: returns the currently-decompiled function's source code (the
+    // contents of decompilationTextCtrl) plus a usable function name.
+    bool GetCurrentDecompiledCode(std::string& outCode, std::string& outName);
+
+    // Helper: inserts a comment block at the top of the decompilation text
+    // control, preserving the existing body. Read-only state is handled.
+    void InsertCommentAtTop(const std::string& comment);

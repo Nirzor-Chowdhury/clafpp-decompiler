@@ -1,0 +1,197 @@
+#include "registers.h"
+
+extern const char* segmentStrs[] =
+{
+	"CS",
+	"SS",
+	"DS",
+	"ES",
+	"FS",
+	"GS"
+};
+
+extern const int numOfSegments = 6;
+
+extern const char* registerStrs[] =
+{
+	"NO REG",
+	
+	"AL", "CL", "DL", "BL", "AH", "CH", "DH", "BH",
+	"R8B", "R9B", "R10B", "R11B", "R12B", "R13B", "R14B", "R15B",
+	"AX", "CX", "DX", "BX", "SP", "BP", "SI", "DI", "IP",
+	"R8W", "R9W", "R10W", "R11W", "R12W", "R13W", "R14W", "R15W",
+	"EAX", "ECX", "EDX", "EBX", "ESP", "EBP", "ESI", "EDI", "EIP",
+	"R8D", "R9D", "R10D", "R11D", "R12D", "R13D", "R14D", "R15D",
+	"RAX", "RCX", "RDX", "RBX", "RSP", "RBP", "RSI", "RDI", "RIP",
+	"R8", "R9", "R10", "R11", "R12", "R13", "R14", "R15",
+	"ST(0)", "ST(1)", "ST(2)", "ST(3)", "ST(4)", "ST(5)", "ST(6)", "ST(7)",
+	"MM0", "MM1", "MM2", "MM3", "MM4", "MM5", "MM6", "MM7",
+	"XMM0", "XMM1", "XMM2", "XMM3", "XMM4", "XMM5", "XMM6", "XMM7", "XMM8", "XMM9", "XMM10", "XMM11", "XMM12", "XMM13", "XMM14", "XMM15",
+	"YMM0", "YMM1", "YMM2", "YMM3", "YMM4", "YMM5", "YMM6", "YMM7", "YMM8", "YMM9", "YMM10", "YMM11", "YMM12", "YMM13", "YMM14", "YMM15",
+	"ZMM0", "ZMM1", "ZMM2", "ZMM3", "ZMM4", "ZMM5", "ZMM6", "ZMM7", "ZMM8", "ZMM9", "ZMM10", "ZMM11", "ZMM12", "ZMM13", "ZMM14", "ZMM15", "ZMM16", "ZMM17", "ZMM18", "ZMM19", "ZMM20", "ZMM21", "ZMM22", "ZMM23", "ZMM24", "ZMM25", "ZMM26", "ZMM27", "ZMM28", "ZMM29", "ZMM30", "ZMM31",
+
+	"CR0", "CR1", "CR2", "CR3", "CR4", "CR5", "CR6", "CR7", "CR8", "CR9", "CR10", "CR11", "CR12", "CR13", "CR14", "CR15",
+	"DR0", "DR1", "DR2", "DR3", "DR4", "DR5", "DR6", "DR7", "DR8", "DR9", "DR10", "DR11", "DR12", "DR13", "DR14", "DR15",
+};
+
+extern const int numOfRegisters = 179;
+
+#ifdef _WIN32
+// there should only be 4 reg args max in one function. The XMM regs can take the place of RCX-R9
+extern const enum Register platformRegArgs[NUM_PLATFORM_REG_ARGS] = { RCX, RDX, R8, R9 };
+extern const enum Register altPlatformRegArgs[NUM_PLATFORM_REG_ARGS] = { XMM0, XMM1, XMM2, XMM3 };
+#endif
+
+#ifdef linux
+extern const enum Register platformRegArgs[NUM_PLATFORM_REG_ARGS] = { RDI, RSI, RDX, RCX, R8, R9 };
+extern const enum Register altPlatformRegArgs[NUM_PLATFORM_REG_ARGS] = { NO_REG };
+#endif
+
+unsigned char compareRegisters(enum Register reg1, enum Register reg2)
+{
+	if (reg1 == AL || reg1 == AH || reg1 == AX || reg1 == EAX || reg1 == RAX)
+	{
+		return (reg2 == AL || reg2 == AH || reg2 == AX || reg2 == EAX || reg2 == RAX);
+	}
+	else if (reg1 == CL || reg1 == CH || reg1 == CX || reg1 == ECX || reg1 == RCX)
+	{
+		return (reg2 == CL || reg2 == CH || reg2 == CX || reg2 == ECX || reg2 == RCX);
+	}
+	else if (reg1 == DL || reg1 == DH || reg1 == DX || reg1 == EDX || reg1 == RDX)
+	{
+		return (reg2 == DL || reg2 == DH || reg2 == DX || reg2 == EDX || reg2 == RDX);
+	}
+	else if (reg1 == BL || reg1 == BH || reg1 == BX || reg1 == EBX || reg1 == RBX)
+	{
+		return (reg2 == BL || reg2 == BH || reg2 == BX || reg2 == EBX || reg2 == RBX);
+	}
+	else if (reg1 == SP || reg1 == ESP || reg1 == RSP)
+	{
+		return (reg2 == SP || reg2 == ESP || reg2 == RSP);
+	}
+	else if (reg1 == BP || reg1 == EBP || reg1 == RBP)
+	{
+		return (reg2 == BP || reg2 == EBP || reg2 == RBP);
+	}
+	else if (reg1 == SI || reg1 == ESI || reg1 == RSI)
+	{
+		return (reg2 == SI || reg2 == ESI || reg2 == RSI);
+	}
+	else if (reg1 == IP || reg1 == EIP || reg1 == RIP)
+	{
+		return (reg2 == IP || reg2 == EIP || reg2 == RIP);
+	}
+	else if (reg1 == DI || reg1 == EDI || reg1 == RDI)
+	{
+		return (reg2 == DI || reg2 == EDI || reg2 == RDI);
+	}
+	else if (reg1 == R8B || reg1 == R8W || reg1 == R8D || reg1 == R8) 
+	{
+		return (reg2 == R8B || reg2 == R8W || reg2 == R8D || reg2 == R8);
+	}
+	else if (reg1 == R9B || reg1 == R9W || reg1 == R9D || reg1 == R9)
+	{
+		return (reg2 == R9B || reg2 == R9W || reg2 == R9D || reg2 == R9);
+	}
+	else if (reg1 == R10B || reg1 == R10W || reg1 == R10D || reg1 == R10)
+	{
+		return (reg2 == R10B || reg2 == R10W || reg2 == R10D || reg2 == R10);
+	}
+	else if (reg1 == R11B || reg1 == R11W || reg1 == R11D || reg1 == R11)
+	{
+		return (reg2 == R11B || reg2 == R11W || reg2 == R11D || reg2 == R11);
+	}
+	else if (reg1 == R12B || reg1 == R12W || reg1 == R12D || reg1 == R12)
+	{
+		return (reg2 == R12B || reg2 == R12W || reg2 == R12D || reg2 == R12);
+	}
+	else if (reg1 == R13B || reg1 == R13W || reg1 == R13D || reg1 == R13)
+	{
+		return (reg2 == R13B || reg2 == R13W || reg2 == R13D || reg2 == R13);
+	}
+	else if (reg1 == R14B || reg1 == R14W || reg1 == R14D || reg1 == R14)
+	{
+		return (reg2 == R14B || reg2 == R14W || reg2 == R14D || reg2 == R14);
+	}
+	else if (reg1 == R15B || reg1 == R15W || reg1 == R15D || reg1 == R15)
+	{
+		return (reg2 == R15B || reg2 == R15W || reg2 == R15D || reg2 == R15);
+	}
+
+	return reg1 == reg2;
+}
+
+unsigned char isRegisterPointer(enum Register reg) 
+{
+	return compareRegisters(reg, BP) || compareRegisters(reg, SP) || compareRegisters(reg, IP);
+}
+
+unsigned char getSizeOfRegister(enum Register reg) // in bytes
+{
+	if (reg >= AL && reg <= R15B) 
+	{
+		return 1;
+	}
+	else if (reg >= AX && reg <= R15W)
+	{
+		return 2;
+	}
+	else if (reg >= EAX && reg <= R15D)
+	{
+		return 4;
+	}
+	else if ((reg >= RAX && reg <= R15) || (reg >= MM0 && reg <= MM7))
+	{
+		return 8;
+	}
+	else if (reg >= ST0 && reg <= ST7)
+	{
+		return 10;
+	}
+	else if (reg >= XMM0 && reg <= XMM15) 
+	{
+		return 16;
+	}
+	else if (reg >= YMM0 && reg <= YMM15) 
+	{
+		return 32;
+	}
+	else if (reg >= ZMM0 && reg <= ZMM31)
+	{
+		return 64;
+	}
+
+	return 0;
+}
+
+enum Register extendRegister(enum Register reg)
+{
+	if (reg >= AL && reg <= BH) 
+	{
+		return (enum Register)(reg + (R8B - AL));
+	}
+	else if((reg >= XMM0 && reg <= XMM7) || (reg >= YMM0 && reg <= YMM7))
+	{
+		return (enum Register)(reg + (XMM8 - XMM0));
+	}
+	else 
+	{
+		return (enum Register)(reg + (R8 - RAX));
+	}
+}
+
+enum Register increaseRegisterSize(enum Register reg)
+{
+	if (reg >= AL && reg <= BL)
+	{
+		return (enum Register)(reg + (AX - AL));
+	}
+	else if (reg >= AH && reg <= BH)
+	{
+		return (enum Register)(reg + (AX - AH));
+	}
+	else
+	{
+		return (enum Register)(reg + (RAX - EAX));
+	}
+}

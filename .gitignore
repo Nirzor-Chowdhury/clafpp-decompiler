@@ -1,0 +1,8 @@
+test32
+test64
+debug-jdc
+debug-jdc.exe
+/.vs
+/tmp
+*.pdb
+*.lastcodeanalysissucceeded

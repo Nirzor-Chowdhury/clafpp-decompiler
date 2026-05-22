@@ -1,0 +1,441 @@
+// mainGui.cpp.additions
+// ============================================================================
+// Apply these changes to src/gui/mainGui.cpp. Three sections:
+//   (A) Add #includes at the top
+//   (B) Insert LLM menu setup inside the MainGui constructor
+//   (C) Append the new method implementations near the end of the file
+// ============================================================================
+
+
+// =========================== (A) NEW #INCLUDES =============================
+// Add these near the existing includes at the top of the file.
+
+#include "../llm/llmCommentGenerator.h"
+#include "../llm/llmSettings.h"
+#include "../llm/llmConfig.h"
+#include <functional>
+
+
+// =========================== (B) MENU SETUP ================================
+// Inside MainGui::MainGui(), AFTER the existing "Tools" menu has been
+// populated with the Bytes/Data/Imports items but BEFORE the
+// `menuBar->Append(toolMenu, "Tools");` line. Easiest is to add a SEPARATE
+// top-level "LLM" menu so we don't have to rewrite the existing Tools menu.
+//
+// Find this block in the current code:
+//
+//     wxMenuItem* openImportsViewer = toolMenu->Append(OpenImportsViewerID, "Imports");
+//     toolMenu->Bind(...);
+//
+//     wxMenu* optionsMenu = new wxMenu();
+//
+// And insert the following BETWEEN them:
+
+    // ---- LLM menu --------------------------------------------------------
+    wxMenu* llmMenu = new wxMenu();
+
+    wxMenuItem* llmFuncComment = llmMenu->Append(LLMGenerateFunctionCommentID,
+        "Generate Function Comment");
+    llmMenu->Bind(wxEVT_MENU,
+        [&](wxCommandEvent&) -> void { LLMGenerateFunctionComment(); },
+        LLMGenerateFunctionCommentID);
+
+    wxMenuItem* llmLineComments = llmMenu->Append(LLMGenerateLineCommentsID,
+        "Generate Line Comments");
+    llmMenu->Bind(wxEVT_MENU,
+        [&](wxCommandEvent&) -> void { LLMGenerateLineComments(); },
+        LLMGenerateLineCommentsID);
+
+    wxMenuItem* llmRenames = llmMenu->Append(LLMSuggestVariableNamesID,
+        "Suggest Variable Names");
+    llmMenu->Bind(wxEVT_MENU,
+        [&](wxCommandEvent&) -> void { LLMSuggestVariableNames(); },
+        LLMSuggestVariableNamesID);
+
+    wxMenuItem* llmComplexity = llmMenu->Append(LLMAnalyzeComplexityID,
+        "Analyze Complexity");
+    llmMenu->Bind(wxEVT_MENU,
+        [&](wxCommandEvent&) -> void { LLMAnalyzeComplexity(); },
+        LLMAnalyzeComplexityID);
+
+    llmMenu->AppendSeparator();
+
+    wxMenuItem* llmSettings = llmMenu->Append(LLMOpenSettingsID, "LLM Settings...");
+    llmMenu->Bind(wxEVT_MENU,
+        [&](wxCommandEvent&) -> void { LLMOpenSettings(); },
+        LLMOpenSettingsID);
+
+
+// Then, AFTER the existing line:
+//     menuBar->Append(toolMenu, "Tools");
+// add:
+
+    menuBar->Append(llmMenu, "LLM");
+
+
+// At the END of the constructor (after SetSizerAndFit(vSizer);), add:
+
+    InitLLM();
+
+
+// ====================== (C) METHOD IMPLEMENTATIONS =========================
+// Append these to the end of mainGui.cpp. They are self-contained.
+//
+// Also, in MainGui::CloseApp (or wherever the frame is being torn down),
+// call ShutdownLLM() first to make sure the worker thread is joined cleanly.
+
+// ---------------------------------------------------------------------------
+// MainGui::InitLLM / ShutdownLLM
+// ---------------------------------------------------------------------------
+void MainGui::InitLLM()
+{
+    using namespace jdc::llm;
+
+    std::string cfgPath = Settings::defaultConfigPath();
+    std::string err;
+    Settings cfg = Settings::load(cfgPath, &err);
+    // err being non-empty here just means the config file didn't exist yet -
+    // we silently fall back to defaults so first-run is clean.
+
+    llmGenerator = std::make_unique<LLMCommentGenerator>(cfg);
+
+    llmSettingsDialog = new LLMSettingsDialog(
+        this, cfg, cfgPath,
+        // callback fires on the GUI thread when the user clicks Save
+        [this](const Settings& newSettings)
+        {
+            if (llmGenerator) llmGenerator->updateConfig(newSettings);
+            statusStaticText->SetLabel("Status: LLM settings updated");
+        });
+    llmSettingsDialog->Hide();
+}
+
+void MainGui::ShutdownLLM()
+{
+    if (llmGenerator) llmGenerator->cancel();
+    if (llmWorkerThread.joinable()) llmWorkerThread.join();
+    llmGenerator.reset();
+    // llmSettingsDialog is a wxFrame child of `this` and will be destroyed
+    // automatically by the wxWidgets parent chain.
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+bool MainGui::GetCurrentDecompiledCode(std::string& outCode, std::string& outName)
+{
+    if (currentDecompiledFunc < 0 ||
+        currentDecompiledFunc >= static_cast<int>(functions.size()))
+    {
+        wxMessageBox("Decompile a function first.",
+                     "No function selected", wxOK | wxICON_INFORMATION, this);
+        return false;
+    }
+    outCode = std::string(decompilationTextCtrl->GetText().mb_str());
+    if (outCode.empty())
+    {
+        wxMessageBox("The decompilation view is empty.",
+                     "No code to analyse", wxOK | wxICON_INFORMATION, this);
+        return false;
+    }
+
+    // Function name comes from the Function struct (JdcStr name field).
+    const Function& f = functions[currentDecompiledFunc];
+    if (f.name.buffer && f.name.bufferSize > 0)
+        outName = std::string(f.name.buffer);
+    else
+        outName = "";
+    return true;
+}
+
+void MainGui::InsertCommentAtTop(const std::string& comment)
+{
+    if (comment.empty()) return;
+    wxString existing = decompilationTextCtrl->GetText();
+    decompilationTextCtrl->SetReadOnly(false);
+    decompilationTextCtrl->SetText(wxString::FromUTF8(comment.c_str()) +
+                                   wxT("\n") + existing);
+    // Re-apply highlighting so the new lines styled appropriately.
+    if (currentDecompiledFunc >= 0 &&
+        currentDecompiledFunc < static_cast<int>(functions.size()))
+    {
+        ApplySyntaxHighlighting(&functions[currentDecompiledFunc]);
+    }
+    decompilationTextCtrl->SetReadOnly(true);
+}
+
+// ---------------------------------------------------------------------------
+// Async runner
+// ---------------------------------------------------------------------------
+bool MainGui::RunLLMAsync(
+    std::function<std::string(std::string&)> task,
+    std::function<void(const std::string&, const std::string&)> onDone,
+    const wxString& busyMessage)
+{
+    if (!llmGenerator)
+    {
+        wxMessageBox("LLM subsystem is not initialised.",
+                     "LLM error", wxOK | wxICON_ERROR, this);
+        return false;
+    }
+    bool expected = false;
+    if (!llmBusy.compare_exchange_strong(expected, true))
+    {
+        wxMessageBox("Another LLM operation is already in progress.",
+                     "LLM busy", wxOK | wxICON_INFORMATION, this);
+        return false;
+    }
+
+    // Make sure any previous thread is joined (it should be already).
+    if (llmWorkerThread.joinable()) llmWorkerThread.join();
+
+    llmGenerator->reset();
+    statusStaticText->SetLabel(wxString("Status: ") + busyMessage);
+
+    llmWorkerThread = std::thread([this, task = std::move(task),
+                                   onDone = std::move(onDone)]()
+    {
+        std::string err;
+        std::string result;
+        try { result = task(err); }
+        catch (const std::exception& e) { err = e.what(); }
+        catch (...)                     { err = "Unknown error"; }
+
+        // Capture the error from the generator if the task didn't fill it.
+        if (result.empty() && err.empty())
+            err = llmGenerator->getLastError();
+
+        CallAfter([this, result, err, onDone]()
+        {
+            llmBusy.store(false);
+            statusStaticText->SetLabel("Status: idle");
+            onDone(result, err);
+        });
+    });
+
+    return true;
+}
+
+// ---------------------------------------------------------------------------
+// Menu handlers
+// ---------------------------------------------------------------------------
+void MainGui::LLMGenerateFunctionComment()
+{
+    std::string code, name;
+    if (!GetCurrentDecompiledCode(code, name)) return;
+
+    auto* progress = new wxProgressDialog(
+        "Generating function comment",
+        "Waiting for Ollama to respond...",
+        100, this,
+        wxPD_APP_MODAL | wxPD_CAN_ABORT | wxPD_AUTO_HIDE | wxPD_ELAPSED_TIME);
+    progress->Pulse();
+
+    bool ok = RunLLMAsync(
+        [this, code, name](std::string& /*err*/) -> std::string
+        {
+            if (!llmGenerator->validateOllamaConnection()) return {};
+            if (!llmGenerator->ensureConfiguredModel())    return {};
+            return llmGenerator->generateFunctionComment(code, name);
+        },
+        [this, progress](const std::string& result, const std::string& err)
+        {
+            progress->Destroy();
+            if (!result.empty())
+            {
+                InsertCommentAtTop(result);
+                statusStaticText->SetLabel("Status: function comment inserted");
+            }
+            else if (llmGenerator && llmGenerator->getConfig().ollama.endpoint.empty())
+            {
+                wxMessageBox("LLM endpoint is empty. Configure it in LLM Settings.",
+                             "LLM error", wxOK | wxICON_ERROR, this);
+            }
+            else
+            {
+                wxMessageBox(wxString("Could not generate comment:\n") + err,
+                             "LLM error", wxOK | wxICON_ERROR, this);
+            }
+        },
+        "generating function comment");
+
+    if (!ok) progress->Destroy();
+    else
+    {
+        // Drive the indeterminate progress bar from a timer-style poll.
+        // Simplest: pulse from CallAfter chains. For brevity, the dialog
+        // will auto-hide when we destroy it from the completion callback.
+    }
+}
+
+void MainGui::LLMGenerateLineComments()
+{
+    std::string code, name;
+    if (!GetCurrentDecompiledCode(code, name)) return;
+
+    auto* progress = new wxProgressDialog(
+        "Generating line comments",
+        "Waiting for Ollama to respond...",
+        100, this,
+        wxPD_APP_MODAL | wxPD_CAN_ABORT | wxPD_AUTO_HIDE | wxPD_ELAPSED_TIME);
+    progress->Pulse();
+
+    // We pass the code through and recover the comments via the side-channel
+    // result string by encoding them ourselves: the worker returns the
+    // merged annotated source.
+    bool ok = RunLLMAsync(
+        [this, code](std::string& /*err*/) -> std::string
+        {
+            if (!llmGenerator->validateOllamaConnection()) return {};
+            if (!llmGenerator->ensureConfiguredModel())    return {};
+            auto comments = llmGenerator->generateLineComments(code);
+
+            // Merge comments back into the source. Lines without a comment
+            // are left untouched.
+            std::ostringstream out;
+            std::istringstream in(code);
+            std::string line;
+            size_t i = 0;
+            while (std::getline(in, line))
+            {
+                out << line;
+                if (i < comments.size() && !comments[i].empty())
+                {
+                    // Pad to column ~50 for readability if line is shorter.
+                    size_t pad = (line.size() < 50) ? (50 - line.size()) : 1;
+                    out << std::string(pad, ' ') << "// " << comments[i];
+                }
+                out << "\n";
+                ++i;
+            }
+            return out.str();
+        },
+        [this, progress](const std::string& result, const std::string& err)
+        {
+            progress->Destroy();
+            if (!result.empty())
+            {
+                decompilationTextCtrl->SetReadOnly(false);
+                decompilationTextCtrl->SetText(wxString::FromUTF8(result.c_str()));
+                if (currentDecompiledFunc >= 0)
+                    ApplySyntaxHighlighting(&functions[currentDecompiledFunc]);
+                decompilationTextCtrl->SetReadOnly(true);
+                statusStaticText->SetLabel("Status: line comments inserted");
+            }
+            else
+            {
+                wxMessageBox(wxString("Could not generate line comments:\n") + err,
+                             "LLM error", wxOK | wxICON_ERROR, this);
+            }
+        },
+        "generating line comments");
+
+    if (!ok) progress->Destroy();
+}
+
+void MainGui::LLMSuggestVariableNames()
+{
+    std::string code, name;
+    if (!GetCurrentDecompiledCode(code, name)) return;
+
+    auto* progress = new wxProgressDialog(
+        "Suggesting variable names",
+        "Waiting for Ollama to respond...",
+        100, this,
+        wxPD_APP_MODAL | wxPD_CAN_ABORT | wxPD_AUTO_HIDE | wxPD_ELAPSED_TIME);
+    progress->Pulse();
+
+    // We render the suggestions as a comment block at the top.
+    bool ok = RunLLMAsync(
+        [this, code](std::string& /*err*/) -> std::string
+        {
+            if (!llmGenerator->validateOllamaConnection()) return {};
+            if (!llmGenerator->ensureConfiguredModel())    return {};
+            auto suggestions = llmGenerator->suggestVariableNames(code);
+            if (suggestions.empty()) return {};
+
+            std::ostringstream out;
+            out << "// --- Suggested variable renames -------------------\n";
+            for (const auto& s : suggestions)
+            {
+                out << "//   " << s.original << "  ->  " << s.suggested;
+                if (!s.reason.empty()) out << "    (" << s.reason << ")";
+                out << "\n";
+            }
+            out << "// --------------------------------------------------";
+            return out.str();
+        },
+        [this, progress](const std::string& result, const std::string& err)
+        {
+            progress->Destroy();
+            if (!result.empty())
+            {
+                InsertCommentAtTop(result);
+                statusStaticText->SetLabel("Status: suggestions inserted");
+            }
+            else
+            {
+                wxMessageBox(wxString("Could not produce suggestions:\n") + err,
+                             "LLM error", wxOK | wxICON_ERROR, this);
+            }
+        },
+        "suggesting variable names");
+
+    if (!ok) progress->Destroy();
+}
+
+void MainGui::LLMAnalyzeComplexity()
+{
+    std::string code, name;
+    if (!GetCurrentDecompiledCode(code, name)) return;
+
+    auto* progress = new wxProgressDialog(
+        "Analyzing complexity",
+        "Waiting for Ollama to respond...",
+        100, this,
+        wxPD_APP_MODAL | wxPD_CAN_ABORT | wxPD_AUTO_HIDE | wxPD_ELAPSED_TIME);
+    progress->Pulse();
+
+    bool ok = RunLLMAsync(
+        [this, code](std::string& /*err*/) -> std::string
+        {
+            if (!llmGenerator->validateOllamaConnection()) return {};
+            if (!llmGenerator->ensureConfiguredModel())    return {};
+            return llmGenerator->analyzeComplexity(code);
+        },
+        [this, progress](const std::string& result, const std::string& err)
+        {
+            progress->Destroy();
+            if (result.empty())
+            {
+                wxMessageBox(wxString("Could not analyse complexity:\n") + err,
+                             "LLM error", wxOK | wxICON_ERROR, this);
+                return;
+            }
+            // Show in a message dialog rather than inserting into the code,
+            // since this is a human-readable report.
+            wxMessageBox(wxString::FromUTF8(result.c_str()),
+                         "Complexity analysis",
+                         wxOK | wxICON_INFORMATION, this);
+        },
+        "analyzing complexity");
+
+    if (!ok) progress->Destroy();
+}
+
+void MainGui::LLMOpenSettings()
+{
+    if (!llmSettingsDialog) return;
+    llmSettingsDialog->OpenMenu(GetPosition());
+}
+
+
+// ---------------------------------------------------------------------------
+// CloseApp - REPLACE THE EXISTING CloseApp WITH THIS VERSION
+// (or just add the ShutdownLLM() call before the existing body).
+// ---------------------------------------------------------------------------
+// void MainGui::CloseApp(wxCloseEvent& e)
+// {
+//     ShutdownLLM();   // <- ADD THIS LINE FIRST
+//     ... existing CloseApp body ...
+// }

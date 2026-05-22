@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{7529A15B-408D-38BB-D1E5-705694CE1E36}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>bin\windows\x32\gui\</OutDir>
+    <TargetName>debug-$(ProjectName)</TargetName>
+    <IntDir>tmp\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>bin\windows\x64\gui\</OutDir>
+    <TargetName>debug-$(ProjectName)</TargetName>
+    <IntDir>tmp\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>bin\windows\x32\gui\</OutDir>
+    <IntDir>tmp\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>bin\windows\x64\gui\</OutDir>
+    <IntDir>tmp\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>C:\wxWidgets-3.2.10\include;C:\wxWidgets-3.2.10\include\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <ConformanceMode>true</ConformanceMode>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>C:\wxWidgets-3.2.10\lib\vc_x64_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>C:\wxWidgets-3.2.10\include;C:\wxWidgets-3.2.10\include\msvc;C:\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ConformanceMode>true</ConformanceMode>
+      <Optimization>Disabled</Optimization>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>C:\wxWidgets-3.2.10\lib\vc_x64_lib;C:\vcpkg\installed\x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>C:\wxWidgets-3.2.10\include;C:\wxWidgets-3.2.10\include\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <ConformanceMode>true</ConformanceMode>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>C:\wxWidgets-3.2.10\lib\vc_x64_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>C:\wxWidgets-3.2.10\include;C:\wxWidgets-3.2.10\include\msvc;C:\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ConformanceMode>true</ConformanceMode>
+      <Optimization>Disabled</Optimization>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>C:\wxWidgets-3.2.10\lib\vc_x64_lib;C:\vcpkg\installed\x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\cli\main.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\decompiler\assignment.c" />
+    <ClCompile Include="src\decompiler\conditions.c" />
+    <ClCompile Include="src\decompiler\dataTypes.c" />
+    <ClCompile Include="src\decompiler\decompilationUtils.c" />
+    <ClCompile Include="src\decompiler\directJmps.c" />
+    <ClCompile Include="src\decompiler\expressions.c" />
+    <ClCompile Include="src\decompiler\decompiler.c" />
+    <ClCompile Include="src\decompiler\functionCalls.c" />
+    <ClCompile Include="src\decompiler\functions.c" />
+    <ClCompile Include="src\decompiler\intrinsics.c" />
+    <ClCompile Include="src\decompiler\operations.c" />
+    <ClCompile Include="src\decompiler\returnStatements.c" />
+    <ClCompile Include="src\disassembler\disassembler.c" />
+    <ClCompile Include="src\disassembler\mnemonics.c" />
+    <ClCompile Include="src\disassembler\modRM.c" />
+    <ClCompile Include="src\disassembler\opcodes.c" />
+    <ClCompile Include="src\disassembler\operands.c" />
+    <ClCompile Include="src\disassembler\prefixes.c" />
+    <ClCompile Include="src\disassembler\registers.c" />
+    <ClCompile Include="src\elf-handler\elfHandler.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\file-handler\fileHandler.c" />
+    <ClCompile Include="src\gui\colorsMenu.cpp" />
+    <ClCompile Include="src\gui\dataViewerMenu.cpp" />
+    <ClCompile Include="src\gui\disassembleBytesMenu.cpp" />
+    <ClCompile Include="src\gui\functionInfoMenu.cpp" />
+    <ClCompile Include="src\gui\guiUtils.cpp" />
+    <ClCompile Include="src\gui\importsViewerMenu.cpp" />
+    <ClCompile Include="src\gui\main.cpp" />
+    <ClCompile Include="src\gui\mainGui.cpp" />
+    <ClCompile Include="src\jdc-str\jdcStr.c" />
+    <ClCompile Include="src\pe-handler\peHandler.c" />
+    <ClCompile Include="src\llm\llmCommentGenerator.cpp" />
+    <ClCompile Include="src\llm\llmConfig.cpp" />
+    <ClCompile Include="src\llm\llmSettings.cpp" />
+    <ClCompile Include="src\llm\ollama_interface.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\decompiler\assignment.h" />
+    <ClInclude Include="src\decompiler\conditions.h" />
+    <ClInclude Include="src\decompiler\dataTypes.h" />
+    <ClInclude Include="src\decompiler\decompilationStructs.h" />
+    <ClInclude Include="src\decompiler\decompilationUtils.h" />
+    <ClInclude Include="src\decompiler\directJmps.h" />
+    <ClInclude Include="src\decompiler\expressions.h" />
+    <ClInclude Include="src\decompiler\decompiler.h" />
+    <ClInclude Include="src\decompiler\functionCalls.h" />
+    <ClInclude Include="src\decompiler\functions.h" />
+    <ClInclude Include="src\decompiler\intrinsics.h" />
+    <ClInclude Include="src\decompiler\operations.h" />
+    <ClInclude Include="src\decompiler\returnStatements.h" />
+    <ClInclude Include="src\disassembler\disassembler.h" />
+    <ClInclude Include="src\disassembler\escapeOpcodeMaps.h" />
+    <ClInclude Include="src\disassembler\extendedOpcodeMap.h" />
+    <ClInclude Include="src\disassembler\mnemonics.h" />
+    <ClInclude Include="src\disassembler\modRM.h" />
+    <ClInclude Include="src\disassembler\oneByteOpcodeMap.h" />
+    <ClInclude Include="src\disassembler\opcodes.h" />
+    <ClInclude Include="src\disassembler\operands.h" />
+    <ClInclude Include="src\disassembler\prefixes.h" />
+    <ClInclude Include="src\disassembler\registers.h" />
+    <ClInclude Include="src\disassembler\threeByteOpcodeMaps.h" />
+    <ClInclude Include="src\disassembler\twoByteOpcodeMap.h" />
+    <ClInclude Include="src\elf-handler\elfHandler.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="src\file-handler\fileHandler.h" />
+    <ClInclude Include="src\gui\colorsMenu.h" />
+    <ClInclude Include="src\gui\dataViewerMenu.h" />
+    <ClInclude Include="src\gui\disassembleBytesMenu.h" />
+    <ClInclude Include="src\gui\functionInfoMenu.h" />
+    <ClInclude Include="src\gui\guiUtils.h" />
+    <ClInclude Include="src\gui\importsViewerMenu.h" />
+    <ClInclude Include="src\gui\main.h" />
+    <ClInclude Include="src\gui\mainGui.h" />
+    <ClInclude Include="src\fileStructs.h" />
+    <ClInclude Include="src\jdc-str\jdcStr.h" />
+    <ClInclude Include="src\pe-handler\peHandler.h" />
+    <ClInclude Include="src\llm\llmCommentGenerator.h" />
+    <ClInclude Include="src\llm\llmConfig.h" />
+    <ClInclude Include="src\llm\llmSettings.h" />
+    <ClInclude Include="src\llm\ollama_interface.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,33 @@
+#pragma once
+#include "disassemblyStructs.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+	unsigned char disassembleInstruction(unsigned char* bytes, unsigned char* maxBytesAddr, struct DisassemblerOptions* disassemblerOptions, struct DisassembledInstruction* result, unsigned char* numOfBytes);
+	
+	unsigned char instructionToStr(struct DisassembledInstruction* instruction, char* buffer, unsigned char bufferSize);
+
+	const char* getPtrSizeStr(int ptrSize);
+
+	const char* getGroup1PrefixStr(enum LegacyPrefix prefix);
+
+	unsigned long long getJumpTableAddress(struct DisassembledInstruction* instructions, int numOfInstructions);
+
+#ifdef __cplusplus
+}
+#endif
+
+static unsigned char memAddressToStr(struct MemoryAddress* memAddr, char* buffer, unsigned char bufferSize);
+
+unsigned char doesInstructionModifyOperand(struct DisassembledInstruction* instruction, unsigned char operandNum, unsigned char* srcOperandNum, unsigned char* overwrites);
+
+unsigned char doesInstructionAccessRegister(struct DisassembledInstruction* instruction, enum Register reg, unsigned char* regOperandNum);
+
+unsigned char doesInstructionModifyRegister(struct DisassembledInstruction* instruction, enum Register reg, unsigned char* regOperandNum, unsigned char* srcOperandNum, unsigned char* overwrites);
+
+unsigned char doesInstructionModifyZF(struct DisassembledInstruction* instruction);
+
+unsigned char doesInstructionDoNothing(struct DisassembledInstruction* instruction);

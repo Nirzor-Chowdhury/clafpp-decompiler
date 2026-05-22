@@ -1,0 +1,10 @@
+#pragma once
+#include "decompilationStructs.h"
+
+unsigned char doesInstructionModifyReturnRegister(struct DecompilationParameters* params);
+
+unsigned char checkForReturnStatement(struct Function* function, int startInstructionIndex, struct DisassembledInstruction* instructions, int numOfInstructions);
+
+unsigned char checkForJumpToReturnStatement(struct Function* function, int startInstructionIndex, struct DisassembledInstruction* instructions, int numOfInstructions);
+
+unsigned char decompileReturnStatement(struct DecompilationParameters* params, struct JdcStr* result);

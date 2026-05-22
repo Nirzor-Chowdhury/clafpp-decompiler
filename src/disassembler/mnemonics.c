@@ -1,0 +1,394 @@
+#include "mnemonics.h"
+
+extern const char* mnemonicStrs[] =
+{
+	"ERROR",
+
+	"MOV", "VMOVUPS", "MOVUPS", "VMOVUPD", "MOVUPD", "VMOVSS", "MOVSS", "VMOVSD", "MOVSD", "MOVSX", "VMOVD", "MOVD", "VMOVAPS", "MOVAPS", "VMOVAPD", "MOVAPD", "VMOVLPS", "MOVLPS", "VMOVHLPS", "MOVHLPS", "VMOVLPD", "MOVLPD", "VMOVSLDUP", "MOVSLDUP", "VMOVDDUP", "MOVDDUP", "VMOVHPS", "MOVHPS", "VMOVLHPS", "MOVLHPS", "VMOVHPD", "MOVHPD", "VMOVSHDUP", "MOVSHDUP", "VMOVNTPS", "MOVNTPS", "VMOVNTPD", "MOVNTPD", "VMOVMSKPS", "MOVMSKPS", "VMOVMSKPD", "MOVMSKPD", "MOVS", "MOVSXD", "MOVZX", "VMOVQ", "MOVQ", "VMOVDQA", "MOVDQA", "VMOVDQU", "VMOVDQU8", "VMOVDQU16", "VMOVDQU32", "VMOVDQU64", "MOVDQU", "MOVNTI", "VMOVQ2DQ", "MOVQ2DQ", "VMOVDQ2Q", "MOVDQ2Q", "VPMOVMSKB", "PMOVMSKB", "MOVNTQ", "VMOVNTDQ", "MOVNTDQ", "MASKMOVQ", "VMASKMOVDQU", "MASKMOVDQU",
+	"LEA",
+	"ADD", "VADDPS", "ADDPS", "VADDPD", "ADDPD", "VADDSS", "ADDSS", "VADDSD", "ADDSD", "VHADDPD", "HADDPD", "VHADDPS", "HADDPS", "XADD", "VPADDQ", "PADDQ",
+	"SUB", "VSUBPS", "SUBPS", "VSUBPD", "SUBPD", "VSUBSS", "SUBSS", "VSUBSD", "SUBSD", "VHSUBPD", "HSUBPD", "VHSUBPS", "HSUBPS",
+	"AND", "VANDPS", "ANDPS", "VANDPD", "ANDPD", "VANDNPS", "ANDNPS", "VANDNPD", "ANDNPD", "VPAND", "PAND", "VPANDN", "PANDN",
+	"OR", "VORPS", "ORPS", "VORPD", "ORPD",
+	"XOR", "VXORPD", "XORPD", "VXORPS", "XORPS", "VPXOR", "PXOR",
+	"SHL", "SHLD",
+	"SHR", "SAR", "SHRD",
+	"IMUL", "VMULPS", "MULPS", "VMULPD", "MULPD", "VMULSS", "MULSS", "VMULSD", "MULSD",
+	"IDIV", "VDIVPS", "DIVPS", "VDIVPD", "DIVPD", "VDIVSS", "DIVSS", "VDIVSD", "DIVSD",
+	"VCVTPS2PD", "CVTPS2PD", "VCVTSS2SD", "CVTSS2SD",  "CVTPI2PD", "VCVTSI2SD", "CVTSI2SD", "VCVTDQ2PD", "CVTDQ2PD",
+	"VCVTPD2PS", "CVTPD2PS", "VCVTSD2SS", "CVTSD2SS",  "CVTPI2PS", "VCVTSI2SS", "CVTSI2SS", "VCVTDQ2PS", "CVTDQ2PS",
+
+	"CVTTPS2PI", "CVTTPD2PI", "VCVTTSS2SI", "CVTTSS2SI", "VCVTTSD2SI", "CVTTSD2SI", "CVTPS2PI", "CVTPD2PI", "VCVTSS2SI", "CVTSS2SI", "VCVTSD2SI", "CVTSD2SI", "VCVTPS2DQ", "CVTPS2DQ", "VCVTTPS2DQ", "CVTTPS2DQ", "VCVTTPD2DQ", "CVTTPD2DQ", "VCVTPD2DQ", "CVTPD2DQ",
+	"CMP", "VCOMISS", "COMISS", "VCOMISD", "COMISD",
+
+	"VPMULLW", "PMULLW",
+
+	"JA SHORT", "JB SHORT", "JBE SHORT", "JG SHORT", "JL SHORT", "JLE SHORT", "JNB SHORT", "JGE SHORT", "JNO SHORT", "JNP SHORT", "JNS SHORT", "JNZ SHORT", "JO SHORT", "JP SHORT", "JS SHORT", "JZ SHORT", "JMP SHORT", "JMP FAR", "JMP NEAR",
+
+	"CMOVO", "CMOVNO", "CMOVB", "CMOVNB", "CMOVZ", "CMOVNZ", "CMOVBE", "CMOVA", "CMOVS", "CMOVNS", "CMOVP", "CMOVNP", "CMOVL", "CMOVGE", "CMOVLE", "CMOVG",
+
+	"AAA", "AAD", "AAM", "AAS", "ADC", "ARPL",
+	"BOUND", "BSF", "BSR", "BSWAP", "BT", "BTC", "BTR", "BTS", "BNDLDX", "BNDMOV", "BNDCL", "BNDCU", "BNDSTX", "BNDMK", "BNDCN",
+	"CALL FAR", "CALL NEAR", "CDQ", "CWD", "CQO", "CLAC", "CLC", "CLD", "CLI", "CLTS", "CMC", "CMPS", "CMPXCHG", "CPUID", "CBW", "CWDE", "CDQE",
+	"DAA", "DAS", "DEC", "DIV",
+	"EMMS", "ENCLS", "ENCLU", "ENDBR", "ENTER",
+	"F2XM1", "FABS", "FADD", "FADDP", "FBLD", "FBSTP", "FCHS", "FCLEX", "FCMOVB", "FCMOVBE", "FCMOVE", "FCMOVNB", "FCMOVNBE", "FCMOVNE", "FCMOVNU", "FCMOVU", "FCOM", "FCOMI", "FCOMIP", "FCOMP", "FCOMPP", "FCOS", "FDECSTP", "FDIV", "FDIVP", "FDIVR", "FDIVRP", "FFREE", "FIADD", "FICOM", "FICOMP", "FIDIV", "FIDIVR", "FILD", "FIMUL", "FINCSTP", "FINIT", "FIST", "FISTP", "FISTTP", "FISUB", "FISUBR", "FLD", "FLD1", "FLDCW", "FLDENV", "FLDL2E", "FLDL2T", "FLDLG2", "FLDLN2", "FLDPI", "FLDZ", "FMUL", "FMULP", "FNOP", "FPATAN", "FPREM", "FPREM1", "FPTAN", "FRNDINT", "FRSTOR", "FSAVE", "FSCALE", "FSIN", "FSINCOS", "FSQRT", "FST", "FSTCW", "FSTENV", "FSTP", "FSTSW", "FSUB", "FSUBP", "FSUBR", "FSUBRP", "FTST", "FUCOM", "FUCOMI", "FUCOMIP", "FUCOMP", "FUCOMPP", "FXAM", "FXCH", "FXTRACT", "FYL2X", "FYL2XP1",
+	"GETSEC",
+	"HLT",
+	"IN", "INC", "INS", "INT", "INT1", "INT3", "INTO", "INVD", "IRET",
+	"JRCXZ", "JMPE",
+	"LAHF", "LAR", "VLDDQU", "LDDQU", "LDS", "LEAVE", "LES", "LFS", "LGS", "LODS", "LOOP", "LOOPNZ", "LOOPZ", "LSL", "LSS", "LZCNT",
+	"MONITOR", "MUL", "MWAIT",
+	"NEG", "NOP", "NOT",
+	"OUT", "OUTS",
+	"POP", "POPAD", "POP DS", "POP ES", "POP FS", "POP GS", "POP SS", "POPF", "PREFETCHW", "PUSH", "PUSHAD", "PUSH CS", "PUSH DS", "PUSH ES", "PUSH FS", "PUSH GS", "PUSH SS", "PUSHF", "POPCNT", "VPINSRW", "PINSRW", "VPEXTRW", "PEXTRW",
+	"RCL", "RCR", "RDMSR", "RDPMC", "RDTSC", "RET FAR", "RET NEAR", "ROL", "ROR", "RSM", "VRCPPS", "RCPPS", "VRCPSS", "RCPSS",
+	"SAHF", "SBB", "SCAS", "SETA", "SETB", "SETBE", "SETG", "SETL", "SETLE", "SETNB", "SETNL", "SETNO", "SETNP", "SETNS", "SETNZ", "SETO", "SETP", "SETS", "SETZ", "STAC", "STC", "STD", "STI", "STOS", "SYSCALL", "SYSENTER", "SYSEXIT", "SYSRET",
+	"TEST", "TZCNT",
+	"VUCOMISD", "UCOMISD", "VUCOMISS", "UCOMISS", "VUNPCKHPD", "UNPCKHPD", "VUNPCKHPS", "UNPCKHPS", "VUNPCKLPD", "UNPCKLPD", "VUNPCKLPS", "UNPCKLPS",
+	"VMCALL", "VMFUNC", "VMLAUNCH", "VMRESUME", "VMXOFF", "VMREAD", "VMWRITE",
+	"WAIT", "WBINVD", "WRMSR",
+	"XABORT", "XBEGIN", "XCHG", "XEND", "XGETBV", "XLAT", "XSETBV", "XTEST",
+
+	"VSQRTPS", "SQRTPS", "VSQRTPD", "SQRTPD", "VSQRTSS", "SQRTSS", "VSQRTSD", "SQRTSD", "VRSQRTPS", "RSQRTPS", "VRSQRTSS", "RSQRTSS",
+
+	"VMINPS", "MINPS", "VMINPD", "MINPD", "VMINSS", "MINSS", "VMINSD", "MINSD",
+	"VMAXPS", "MAXPS", "VMAXPD", "MAXPD", "VMAXSS", "MAXSS", "VMAXSD", "MAXSD",
+
+	"VADDSUBPD", "ADDSUBPD", "VADDSUBPS", "ADDSUBPS",
+
+	"VPUNPCKLBW", "PUNPCKLBW", "VPUNPCKLWD", "PUNPCKLWD", "VPUNPCKLDQ", "PUNPCKLDQ", "VPACKSSWB", "PACKSSWB", "VPACKUSWB", "PACKUSWB", "VPUNPCKHBW", "PUNPCKHBW", "VPUNPCKHWD", "PUNPCKHWD", "VPUNPCKHDQ", "PUNPCKHDQ", "VPACKSSDW", "PACKSSDW", "VPUNPCKLQDQ", "PUNPCKLQDQ", "VPUNPCKHQDQ", "PUNPCKHQDQ",
+	"VPCMPGTB", "PCMPGTB", "VPCMPGTW", "PCMPGTW", "VPCMPGTD", "PCMPGTD",
+
+	"PSHUFW", "VPSHUFD", "PSHUFD", "VPSHUFHW", "PSHUFHW", "VPSHUFLW", "PSHUFLW",
+
+	"VPCMPEQB", "PCMPEQB", "VPCMPEQW", "PCMPEQW", "VPCMPEQD", "PCMPEQD",
+
+	"VCMPPS", "CMPPS", "VCMPPD", "CMPPD", "VCMPSS", "CMPSS", "VCMPSD", "CMPSD",
+
+	"VSHUFPS", "SHUFPS", "VSHUFPD", "SHUFPD",
+
+	"VPSRLW", "PSRLW", "VPSRLD", "PSRLD", "VPSRLQ", "PSRLQ", "VPSRLDQ", "PSRLDQ", "VPSLLDQ", "PSLLDQ",
+
+	"VPSUBUSB", "PSUBUSB", "VPSUBUSW", "PSUBUSW",
+	"VPMINUB", "PMINUB",
+	"VPADDUSB", "PADDUSB", "VPADDUSW", "PADDUSW",
+	"PMAXUB",
+	"VPAVGB", "PAVGB", "VPSRAW", "PSRAW", "VPSRAD", "PSRAD", "VPAVGW", "PAVGW", "VPMULHUW", "PMULHUW", "VPMULHW", "PMULHW",
+	"VPSUBSB", "PSUBSB", "VPSUBSW", "PSUBSW", "VPMINSW", "PMINSW", "VPOR", "POR", "VPADDSB", "PADDSB", "VPADDSW", "PADDSW", "VPMAXSW", "PMAXSW",
+	"VPSLLW", "PSLLW", "VPSLLD", "PSLLD", "VPSLLQ", "PSLLQ", "VPMULUDQ", "PMULUDQ", "VPMADDWD", "PMADDWD", "VPSADBW", "PSADBW",
+	"VPSUBB", "PSUBB", "VPSUBW", "PSUBW", "VPSUBD", "PSUBD", "VPSUBQ", "PSUBQ", "VPADDB", "PADDB", "VPADDW", "PADDW", "VPADDD", "PADDD",
+
+	"FXSAVE", "FXRSTOR", "LDMXCSR", "STMXCSR", "XSAVE", "XRSTOR", "XSAVEOPT", "CLFLUSH",
+	"LFENCE", "MFENCE", "SFENCE",
+	"RDFSBASE", "RDGSBASE", "WRFSBASE", "WRGSBASE",
+	"RDRAND", "RDSEED", "RDPID",
+
+	"VPSHUFB", "PSHUFB",
+	"VPHADDW", "PHADDW", "VPHADDD", "PHADDD", "VPHADDSW", "PHADDSW",
+	"VPMADDUBSW", "PMADDUBSW",
+	"VPHSUBW", "PHSUBW", "VPHSUBD", "PHSUBD", "VPHSUBSW", "PHSUBSW",
+	"VPSIGNB", "PSIGNB", "VPSIGNW", "PSIGNW", "VPSIGND", "PSIGND",
+	"VPMULHRSW", "PMULHRSW",
+	"VPERMILPS", "VPERMILPD",
+	"VTESTPS", "VTESTPD",
+	"VPBLENDVB", "PBLENDVB",
+	"VCVTPH2PS",
+	"VBLENDVPS", "BLENDVPS", "VBLENDVPD", "BLENDVPD",
+	"VPERMPS",
+	"VPTEST", "PTEST",
+	"VBROADCASTSS", "VBROADCASTSD", "VBROADCASTF128",
+	"VPABSB", "PABSB", "VPABSW", "PABSW", "VPABSD", "PABSD",
+	"VPMOVSXBW", "PMOVSXBW", "VPMOVSXBD", "PMOVSXBD", "VPMOVSXBQ", "PMOVSXBQ", "VPMOVSXWD", "PMOVSXWD", "VPMOVSXWQ", "PMOVSXWQ", "VPMOVSXDQ", "PMOVSXDQ",
+	"VPMULDQ", "PMULDQ",
+	"VPCMPEQQ", "PCMPEQQ",
+	"VMOVNTDQA", "MOVNTDQA",
+	"VPACKUSDW", "PACKUSDW",
+	"VMASKMOVPS", "VMASKMOVPD",
+	"VPMOVZXBW", "PMOVZXBW", "VPMOVZXBD", "PMOVZXBD", "VPMOVZXBQ", "PMOVZXBQ", "VPMOVZXWD", "PMOVZXWD", "VPMOVZXWQ", "PMOVZXWQ", "VPMOVZXDQ", "PMOVZXDQ",
+	"VPERMD",
+	"VPCMPGTQ", "PCMPGTQ",
+	"VPMINSB", "PMINSB", "VPMINSD", "PMINSD", "VPMINUW", "PMINUW", "VPMINUD", "PMINUD",
+	"VPMAXSB", "PMAXSB", "VPMAXSD", "PMAXSD", "VPMAXUW", "PMAXUW", "VPMAXUD", "PMAXUD",
+	"VPMULLD", "PMULLD",
+	"VPHMINPOSUW", "PHMINPOSUW",
+	"VPSRLVD", "VPSRLVQ", "VPSRAVD", "VPSLLVD", "VPSLLVQ",
+	"VPBROADCASTD", "VPBROADCASTQ", "VBROADCASTI128", "VBROADCASTI64X2", "VBROADCASTI32X4", "VPBROADCASTB", "VPBROADCASTW",
+	"INVEPT", "INVVPID", "INVPCID",
+	"VPMASKMOVD", "VPMASKMOVQ",
+	"VGATHERDD", "VGATHERDQ", "VGATHERQD", "VGATHERQQ", "VGATHERDPS", "VGATHERDPD", "VGATHERQPS", "VGATHERQPD",
+	"VFMADDSUB132PS", "VFMADDSUB132PD", "VFMSUBADD132PS", "VFMSUBADD132PD", "VFMADD132PS", "VFMADD132PD", "VFMADD132SS", "VFMADD132SD", "VFMSUB132PS", "VFMSUB132PD", "VFMSUB132SS", "VFMSUB132SD", "VFNMADD132PS", "VFNMADD132PD", "VFNMADD132SS", "VFNMADD132SD", "VFNMSUB132PS", "VFNMSUB132PD", "VFNMSUB132SS", "VFNMSUB132SD",
+	"VFMADDSUB213PS", "VFMADDSUB213PD", "VFMSUBADD213PS", "VFMSUBADD213PD", "VFMADD213PS", "VFMADD213PD", "VFMADD213SS", "VFMADD213SD", "VFMSUB213PS", "VFMSUB213PD", "VFMSUB213SS", "VFMSUB213SD", "VFNMADD213PS", "VFNMADD213PD", "VFNMADD213SS", "VFNMADD213SD", "VFNMSUB213PS", "VFNMSUB213PD", "VFNMSUB213SS", "VFNMSUB213SD",
+	"VFMADDSUB231PS", "VFMADDSUB231PD", "VFMSUBADD231PS", "VFMSUBADD231PD", "VFMADD231PS", "VFMADD231PD", "VFMADD231SS", "VFMADD231SD", "VFMSUB231PS", "VFMSUB231PD", "VFMSUB231SS", "VFMSUB231SD", "VFNMADD231PS", "VFNMADD231PD", "VFNMADD231SS", "VFNMADD231SD", "VFNMSUB231PS", "VFNMSUB231PD", "VFNMSUB231SS", "VFNMSUB231SD",
+	"SHA1NEXTE", "SHA1MSG1", "SHA1MSG2",
+	"SHA256RNDS2", "SHA256MSG1", "SHA256MSG2",
+	"VAESIMC", "AESIMC", "VAESENC", "AESENC", "VAESENCLAST", "AESENCLAST", "VAESDEC", "AESDEC", "VAESDECLAST", "AESDECLAST", "VAESKEYGENASSIST", "AESKEYGENASSIST",
+	"MOVBE",
+	"CRC32",
+	"ANDN",
+	"BZHI",
+	"PEXT", "PDEP",
+	"ADCX", "ADOX",
+	"MULX",
+	"BEXTR",
+	"SHLX", "SARX", "SHRX",
+
+	"VPERMQ", "VPERMPD",
+	"VPBLENDD", "VBLENDPS", "BLENDPS", "VBLENDPD", "BLENDPD", "VPBLENDW", "PBLENDW",
+	"VPERM2F128", "VPERM2I128",
+	"VROUNDPS", "ROUNDPS", "VROUNDPD", "ROUNDPD", "VROUNDSS", "ROUNDSS", "VROUNDSD", "ROUNDSD",
+	"VPALIGNR", "PALIGNR",
+	"VPEXTRB", "PEXTRB", "VPEXTRD", "PEXTRD", "VPEXTRQ", "PEXTRQ",
+	"VINSERTPS", "INSERTPS", "VEXTRACTPS", "EXTRACTPS",
+	"VINSERTF128", "VINSERTF32X4", "VINSERTF64X2", "VEXTRACTF128", "VEXTRACTF32X4", "VEXTRACTF64X2",
+	"VINSERTI128", "VINSERTI32X4", "VINSERTI64X2", "VEXTRACTI128", "VEXTRACTI32X4", "VEXTRACTI64X2",
+	"VCVTPS2PH",
+	"VPINSRB", "PINSRB", "VPINSRD", "PINSRD", "VPINSRQ", "PINSRQ",
+	"VDPPS", "DPPS", "VDPPD", "DPPD",
+	"VMPSADBW", "MPSADBW",
+	"VPCLMULQDQ", "PCLMULQDQ",
+	"VPCMPESTRM", "PCMPESTRM", "VPCMPESTRI", "PCMPESTRI", "VPCMPISTRM", "PCMPISTRM", "VPCMPISTRI", "PCMPISTRI",
+	"SHA1RNDS4",
+	"RORX",
+
+	"PREFETCHNTA", "PREFETCHT0", "PREFETCHT1", "PREFETCHT2",
+
+	"SLDT", "STR", "LLDT", "LTR", "VERR", "VERW",
+	"SGDT", "SIDT", "LGDT", "LIDT", "SMSW", "LMSW", "INVLPG",
+	"SWAPGS", "RDTSCP",
+	"CMPXCH8B", "CMPXCHG16B",
+	"VMPTRLD", "VMPTRST",
+	"VMCLEAR", "VMXON",
+	"BLSR", "BLSMSK", "BLSI",
+
+	"VPTERNLOGD", "VPTERNLOGQ",
+	"VINSERTI32X8", "VINSERTI64X4",
+	"VSHUFI32X4", "VSHUFI64X2",
+	"VZEROUPPER", "VZEROALL",
+
+	"UD0", "UD1", "UD2",
+
+	"DATA"
+};
+
+unsigned char isOpcodeMov(enum Mnemonic opcode)
+{
+	if (opcode >= MOV && opcode <= MASKMOVDQU)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeAdd(enum Mnemonic opcode)
+{
+	if (opcode >= ADD && opcode <= PADDQ)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeSub(enum Mnemonic opcode)
+{
+	if (opcode >= SUB && opcode <= HSUBPS)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeAnd(enum Mnemonic opcode)
+{
+	if (opcode >= AND && opcode <= PANDN)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeOr(enum Mnemonic opcode)
+{
+	if (opcode >= OR && opcode <= ORPD)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeXor(enum Mnemonic opcode)
+{
+	if (opcode >= XOR && opcode <= PXOR)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeShl(enum Mnemonic opcode)
+{
+	if (opcode >= SHL && opcode <= SHLD)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeShr(enum Mnemonic opcode)
+{
+	if (opcode >= SHR && opcode <= SHRD)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeMul(enum Mnemonic opcode)
+{
+	if (opcode >= IMUL && opcode <= MULSD)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeDiv(enum Mnemonic opcode)
+{
+	if (opcode > IDIV && opcode <= DIVSD) // IDIV not included because it is handled as an edge case. it divides AX by the first operand
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeCvtToDbl(enum Mnemonic opcode)
+{
+	if (opcode >= VCVTPS2PD && opcode <= CVTDQ2PD)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeCvtToFlt(enum Mnemonic opcode)
+{
+	if (opcode >= VCVTPD2PS && opcode <= CVTDQ2PS)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeCall(enum Mnemonic opcode)
+{
+	if (opcode == CALL_FAR || opcode == CALL_NEAR || opcode == JMP_FAR)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeReturn(enum Mnemonic opcode)
+{
+	if (opcode == RET_NEAR || opcode == RET_FAR || opcode == JMP_FAR)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeJmp(enum Mnemonic opcode)
+{
+	if (opcode == JMP_SHORT || opcode == JMP_NEAR)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeCmp(enum Mnemonic opcode)
+{
+	if (opcode >= CMP && opcode <= COMISD)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeJcc(enum Mnemonic opcode)
+{
+	if (opcode >= JA_SHORT && opcode <= JZ_SHORT)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeCMOVcc(enum Mnemonic opcode)
+{
+	if (opcode >= CMOVO && opcode <= CMOVG)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeSETcc(enum Mnemonic opcode)
+{
+	if (opcode >= SETA && opcode <= SETZ)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeAES(enum Mnemonic opcode)
+{
+	if (opcode >= VAESIMC && opcode <= AESKEYGENASSIST)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char isOpcodeShuf(enum Mnemonic opcode)
+{
+	if (opcode >= VSHUFPS && opcode <= SHUFPD)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char doesOpcodeUseUnsignedInt(enum Mnemonic opcode)
+{
+	switch (opcode)
+	{
+	case MUL:
+	case DIV:
+		return 1;
+	}
+
+	return 0;
+}

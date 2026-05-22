@@ -1,0 +1,17 @@
+CompileFlags:
+  Add:
+    - "-std=c++17"
+    - "-DUNICODE"
+    - "-D_UNICODE"
+    - "-DWIN32"
+    - "-D_WINDOWS"
+    - "-D_CRT_SECURE_NO_WARNINGS"
+    - "-D_DEBUG"
+    - "-IC:/wxWidgets-3.2.10/include"
+    - "-IC:/wxWidgets-3.2.10/include/msvc"
+    - "-IC:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Tools/MSVC/14.29.30133/include"
+    - "-IC:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Tools/MSVC/14.29.30133/atlmfc/include"
+    - "-IC:/Program Files (x86)/Windows Kits/10/Include/10.0.19041.0/ucrt"
+    - "-IC:/Program Files (x86)/Windows Kits/10/Include/10.0.19041.0/um"
+    - "-IC:/Program Files (x86)/Windows Kits/10/Include/10.0.19041.0/shared"
+  Compiler: "C:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64/cl.exe"
