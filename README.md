@@ -6,10 +6,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-blue)](https://github.com/Nirzor-Chowdhury/clafpp-decompiler)
-[![Architecture](https://img.shields.io/badge/arch-x86%20%7C%20x86--64-brightgreen)](https://github.com/Nirzor-Chowdhury/clafpp-decompiler)
 [![Status](https://img.shields.io/badge/status-Active%20Development-orange)](https://github.com/Nirzor-Chowdhury/clafpp-decompiler)
 
-[Features](#features) • [Installation](#installation) • [Usage](#usage) • [Architecture](#architecture) • [Documentation](#documentation) • [Contributing](#contributing)
+[Features](#features) • [Installation](#installation) • [Usage](#usage)  • [Documentation](#documentation) • [Contributing](#contributing)
 
 </div>
 
@@ -202,103 +201,6 @@ Access **LLM → Settings** to configure:
 **For complete usage instructions, see [User Guide](docs/USER_GUIDE.md)**
 
 ---
-
-## Architecture
-
-### Project Structure
-clafpp-decompiler/
-├── src/
-│   ├── decompiler/       # Core decompilation logic
-│   │   ├── decompiler.h/cpp
-│   │   └── ast.h/cpp
-│   ├── disassembler/     # x86/x64 instruction decoder
-│   │   ├── disassembler.h/cpp
-│   │   └── instruction.h/cpp
-│   ├── pe-handler/       # Windows PE file parser
-│   │   └── pe_parser.h/cpp
-│   ├── elf-handler/      # Linux ELF file parser
-│   │   └── elf_parser.h/cpp
-│   ├── file-handler/     # Generic file I/O operations
-│   ├── gui/              # wxWidgets interface
-│   │   ├── mainGui.h/cpp
-│   │   └── functionInfoMenu.h/cpp
-│   ├── llm/              # AI enhancement module
-│   │   ├── llmConfig.h/cpp           # Configuration management
-│   │   ├── ollama_interface.h/cpp    # HTTP/Ollama communication
-│   │   ├── llmCommentGenerator.h/cpp # High-level LLM API
-│   │   └── llmSettings.h/cpp         # Settings dialog
-│   └── cli/              # Command-line interface (future)
-├── bin/                  # Compiled binaries
-│   ├── windows/x64/gui/
-│   └── linux/x64/gui/
-├── build/                # Build configuration
-├── docs/                 # Documentation
-│   ├── INSTALLATION.md
-│   ├── LLM_SETUP.md
-│   └── USER_GUIDE.md
-├── screenshots/          # Documentation images
-├── jdc.sln              # Visual Studio solution
-├── Makefile             # Linux build configuration
-├── LICENSE              # MIT License
-└── README.md            # This file
-
-### Decompilation Pipeline
-Binary File (PE/ELF)
-↓
-┌─────────────────────────────────────┐
-│  Phase 1: Binary Parsing & Loading  │
-│  • Parse executable structure       │
-│  • Extract code sections            │
-│  • Identify entry point             │
-└─────────────────────────────────────┘
-↓
-┌─────────────────────────────────────┐
-│  Phase 2: Instruction Decoding      │
-│  • x86/x64 disassembly              │
-│  • Opcode mapping                   │
-│  • Operand parsing                  │
-└─────────────────────────────────────┘
-↓
-┌─────────────────────────────────────┐
-│  Phase 3: Intermediate Repr (IR)    │
-│  • Simplify instructions            │
-│  • Normalize operations             │
-│  • Architecture-independent form    │
-└─────────────────────────────────────┘
-↓
-┌─────────────────────────────────────┐
-│  Phase 4: Control Flow Graph (CFG)  │
-│  • Basic block identification       │
-│  • Edge construction                │
-│  • Jump target resolution           │
-└─────────────────────────────────────┘
-↓
-┌─────────────────────────────────────┐
-│  Phase 5: Structure Recovery & AST  │
-│  • Loop detection                   │
-│  • Conditional identification       │
-│  • Abstract Syntax Tree generation  │
-└─────────────────────────────────────┘
-↓
-┌─────────────────────────────────────┐
-│  Phase 6: C-like Code Generation    │
-│  • AST traversal                    │
-│  • Variable assignment              │
-│  • Code formatting                  │
-└─────────────────────────────────────┘
-↓
-Pseudo-C Code
-↓
-┌─────────────────────────────────────┐
-│  Phase 7: AI Enhancement (Optional) │
-│  • Function documentation           │
-│  • Variable naming suggestions      │
-│  • Complexity analysis              │
-│  • Inline comments                  │
-└─────────────────────────────────────┘
-↓
-Enhanced Documented Code
-
 ### Key Design Principles
 
 - **Modularity**: Each phase operates independently for easy debugging and extension
@@ -365,8 +267,8 @@ This project is part of academic research in binary analysis and AI-assisted rev
 - **Year**: 2026
 
 **Authors:**
-- Nirzor Chowdhury (Reg. No. 202200487)
-- Abhijeet (Reg. No. 202200529)
+- Nirzor Chowdhury
+- Abhijeet
 
 **Supervisor:**
 - Dr. Udit Kumar Chakraborty (Professor & HOD, CSE, SMIT)
@@ -376,7 +278,7 @@ If you use CLAF++ in your research, please cite:
 ```bibtex
 @misc{clafpp2026,
   title={CLAF++: AI-Enhanced Binary Decompilation Framework},
-  author={Chowdhury, Nirzor and Abhijeet},
+  author={Nirzor Chowdhury and Abhijeet},
   year={2026},
   institution={Sikkim Manipal Institute of Technology},
   note={B.Tech Major Project, Department of Computer Science and Engineering}
@@ -566,18 +468,11 @@ This project builds upon extensive prior work in reverse engineering, compiler t
 
 **Nirzor Chowdhury**
 - GitHub: [@Nirzor-Chowdhury](https://github.com/Nirzor-Chowdhury)
-- Email: [Contact via GitHub]
+- Email: nirzor.chy10@gmail.com
 
 **Abhijeet**
-- GitHub: [Profile Link]
-- Email: [Contact via GitHub]
-
-### Institution
-
-**Department of Computer Science and Engineering**  
-Sikkim Manipal Institute of Technology  
-Majitar, Rangpo, East Sikkim – 737136  
-India
+- GitHub: [[@A013](https://github.com/A3013)]
+- Email: abhijeet301303@gmail.com
 
 ### Project Resources
 
