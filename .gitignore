@@ -1,10 +1,32 @@
-build/
-bin/
-*.o
-*.obj
+# Binaries
 *.exe
 *.dll
 *.so
+*.dylib
+*.o
+*.obj
+
+# Build directories
+bin/
+build/
+obj/
+x64/
+Debug/
+Release/
+
+# IDE files
+.vs/
+*.vcxproj.user
+*.suo
+*.sln.docstates
+
+# Dependencies
+vcpkg_installed/
+packages/
+
+# Logs
 *.log
-.vscode/
-.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
